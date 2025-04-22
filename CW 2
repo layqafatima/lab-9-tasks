@@ -1,0 +1,69 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+class Logger {
+private:
+    vector<string> logs;
+    const int MAX_LOGS = 1000;
+
+    string formatMessage(const string& module, const string& message, const string& severity) {
+        return   severity +" "+  module  +" " + message;
+    }
+
+    void storeLog(const string& formattedMessage) {
+        if (logs.size() >= MAX_LOGS) {
+            logs.pop_back();
+        }
+      logs.push_back(formattedMessage);
+    }
+
+public:
+    void log(const string& module, const string& message, const string& severity) {
+        string formatted = formatMessage(module, message, severity);
+        storeLog(formatted);
+    }
+
+    void logInfo(const string& module, const string& message) {
+        log(module, message, "INFO");
+    }
+
+    void logWarning(const string& module, const string& message) {
+        log(module, message, "WARNING");
+    }
+
+    void logError(const string& module, const string& message) {
+        log(module, message, "ERROR");
+    }
+
+    vector<string> retrieveLogs(const string& authCode) const {
+        if (authCode != "admin123") {
+            cout << "Access Denied: Invalid authentication.\n";
+            return {};
+        }
+        return logs;
+    }
+};
+
+int main() {
+    Logger logger;
+    logger.logInfo("Network", "Connection established.");
+    logger.logWarning("Database", "Query took too long.");
+    logger.logError("Auth", "Failed login attempt.");
+    logger.logWarning("System", "Low disk space warning.");
+
+    cout << "\n--- Attempting Unauthorized Log Access ---\n";
+    vector<string> logs1 = logger.retrieveLogs("guest");
+    if (logs1.empty()) {
+        cout << "No logs retrieved.\n";
+    }
+
+    cout << "\n--- Authorized Log Access ---\n";
+    vector<string> logs2 = logger.retrieveLogs("admin123");
+    for (int i = 0; i < logs2.size(); ++i) {
+        cout << logs2[i] << "\n";
+    }
+
+    return 0;
+}
