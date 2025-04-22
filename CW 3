@@ -1,0 +1,88 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class PatientRecord {
+private:
+    string name;
+    string id;
+    string dob;
+    string medicalHistory;
+    string billingDetails;
+
+public:
+    PatientRecord(string n, string i, string d)
+        : name(n), id(i), dob(d), medicalHistory("Unknown"), billingDetails("Pending") {}
+
+    string getPublicData() const {
+        return "Name: " + name + ", ID: " + id + ", Date of Birth: " + dob;
+    }
+
+    void updateMedicalHistory(const string& history) {
+        medicalHistory = history;
+    }
+
+    void addBillingDetails(const string& billing) {
+        billingDetails = billing;
+    }
+
+    friend class Doctor;
+    friend class Billing;
+};
+
+class Doctor {
+private:
+    PatientRecord& patientRecord;
+
+public:
+    Doctor(PatientRecord& record) : patientRecord(record) {}
+
+    void viewPublicData() {
+        cout << "Doctor viewing public data: " << patientRecord.getPublicData() << endl;
+    }
+
+    void updateMedicalHistory(const string& history) {
+        patientRecord.updateMedicalHistory(history);
+        cout << "Doctor updated medical history: " << history << endl;
+    }
+};
+
+class Billing {
+private:
+    PatientRecord& patientRecord;
+
+public:
+    Billing(PatientRecord& record) : patientRecord(record) {}
+
+    void viewPublicData() {
+        cout << "Billing staff viewing public data: " << patientRecord.getPublicData() << endl;
+    }
+
+    void updateMedicalHistory() {
+        cout << "Billing staff cannot update medical history." << endl;
+    }
+
+    void addBillingDetails(const string& billing) {
+        patientRecord.addBillingDetails(billing);
+        cout << "Billing staff updated billing details: " << billing << endl;
+    }
+};
+
+int main() {
+    PatientRecord patient("Layqa Fatima", "12345", "22-01-2005");
+
+    Doctor doctor(patient);
+    Billing billing(patient);
+
+    doctor.viewPublicData();
+    doctor.updateMedicalHistory("Patient has a mild cold.");
+
+    billing.viewPublicData();
+    billing.addBillingDetails("Bill paid: $500");
+
+    billing.updateMedicalHistory();
+
+    return 0;
+}
