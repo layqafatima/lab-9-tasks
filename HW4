@@ -1,0 +1,63 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Student {
+protected:
+    string name;
+    int studentID;
+public:
+    virtual double getTuition(string status, int creditHours) = 0;
+    virtual ~Student() {}
+    void setStudentInfo(string name, int id) {
+        this->name = name;
+        this->studentID = id;
+    }
+    void displayInfo() {
+        cout << "Student Name: " << name << endl;
+        cout << "Student ID: " << studentID << endl;
+    }
+};
+
+class GraduateStudent : public Student {
+private:
+    string researchTopic;
+public:
+    GraduateStudent(string name, int id, string researchTopic) {
+        this->name = name;
+        this->studentID = id;
+        this->researchTopic = researchTopic;
+    }
+    double getTuition(string status, int creditHours) override {
+        double tuition = 0.0;
+        if (status == "undergraduate") {
+            tuition = 200 * creditHours;
+        } else if (status == "graduate") {
+            tuition = 300 * creditHours;
+        } else if (status == "doctoral") {
+            tuition = 400 * creditHours;
+        }
+        return tuition;
+    }
+    void setResearchTopic(string topic) {
+        researchTopic = topic;
+    }
+    string getResearchTopic() {
+        return researchTopic;
+    }
+    void displayResearchTopic() {
+        cout << "Research Topic: " << researchTopic << endl;
+    }
+};
+
+int main() {
+    GraduateStudent gradStudent("Layqa", 101, "AI and Machine Learning");
+    gradStudent.displayInfo();
+    gradStudent.displayResearchTopic();
+    string status = "graduate";
+    int creditHours = 12;
+    cout << "Tuition for " << gradStudent.getResearchTopic() << " student: $"
+         << gradStudent.getTuition(status, creditHours) << endl;
+    return 0;
+}
