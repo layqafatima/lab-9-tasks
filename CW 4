@@ -1,0 +1,97 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class Flight {
+private:
+    string flightNumber;
+    string departure;
+    string arrival;
+    int capacity;
+    int bookedSeats;
+
+public:
+    Flight(string number, string dep, string arr, int cap)
+        : flightNumber(number), departure(dep), arrival(arr), capacity(cap), bookedSeats(0) {}
+
+    bool bookSeat() {
+        if (bookedSeats < capacity) {
+            bookedSeats++;
+            cout << "Seat booked on flight " << flightNumber << ". Total booked: " << bookedSeats << endl;
+            return true;
+        } else {
+            cout << "Cannot book seat. Flight " << flightNumber << " is full." << endl;
+            return false;
+        }
+    }
+
+    bool cancelSeat() {
+        if (bookedSeats > 0) {
+            bookedSeats--;
+            cout << "Seat canceled on flight " << flightNumber << ". Total booked: " << bookedSeats << endl;
+            return true;
+        } else {
+            cout << "No seats to cancel on flight " << flightNumber << "." << endl;
+            return false;
+        }
+    }
+
+    bool upgradeSeat() {
+        if (bookedSeats > 0) {
+            cout << "Seat upgraded on flight " << flightNumber << "." << endl;
+            return true;
+        } else {
+            cout << "Cannot upgrade. No booked seats on flight " << flightNumber << "." << endl;
+            return false;
+        }
+    }
+
+    string getFlightInfo() const {
+        return "Flight: " + flightNumber + ", From: " + departure + ", To: " + arrival;
+    }
+};
+
+class Passenger {
+private:
+    string id;
+    string name;
+
+public:
+    Passenger(string pid, string pname) : id(pid), name(pname) {}
+
+    void requestBooking(Flight& flight) {
+        cout << name << " requests booking.\n";
+        flight.bookSeat();
+    }
+
+    void requestCancellation(Flight& flight) {
+        cout << name << " requests cancellation.\n";
+        flight.cancelSeat();
+    }
+
+    void requestUpgrade(Flight& flight) {
+        cout << name << " requests upgrade.\n";
+        flight.upgradeSeat();
+    }
+};
+
+int main() {
+    Flight flight1("AI101", "New York", "London", 2);
+    Flight flight2("BA202", "Paris", "Tokyo", 1);
+
+    Passenger passenger1("P001", "Alice");
+    Passenger passenger2("P002", "Bob");
+
+    cout << flight1.getFlightInfo() << endl;
+    passenger1.requestBooking(flight1);
+    passenger2.requestBooking(flight1);
+    passenger1.requestBooking(flight1);
+
+    passenger2.requestUpgrade(flight1);
+    passenger1.requestCancellation(flight1);
+    passenger2.requestCancellation(flight2);
+
+    return 0;
+}
