@@ -1,0 +1,92 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Wallet {
+private:
+    double balance;
+    double dailyDepositLimit;
+    double dailyWithdrawalLimit;
+    double todayDeposited;
+    double todayWithdrawn;
+
+public:
+    Wallet(double depositLimit = 10000, double withdrawLimit = 5000)
+        : balance(0), dailyDepositLimit(depositLimit), dailyWithdrawalLimit(withdrawLimit),
+          todayDeposited(0), todayWithdrawn(0) {}
+
+    bool deposit(double amount) {
+        if (amount <= 0) {
+            cout << "Invalid deposit amount.\n";
+            return false;
+        }
+        if (todayDeposited + amount > dailyDepositLimit) {
+            cout << "Deposit failed: Daily deposit limit exceeded.\n";
+            return false;
+        }
+        balance += amount;
+        todayDeposited += amount;
+        return true;
+    }
+
+    bool withdraw(double amount) {
+        if (amount <= 0) {
+            cout << "Invalid withdrawal amount.\n";
+            return false;
+        }
+        if (amount > balance) {
+            cout << "Withdrawal failed: Insufficient balance.\n";
+            return false;
+        }
+        if (todayWithdrawn + amount > dailyWithdrawalLimit) {
+            cout << "Withdrawal failed: Daily withdrawal limit exceeded.\n";
+            return false;
+        }
+        balance -= amount;
+        todayWithdrawn += amount;
+        return true;
+    }
+
+    double getBalance() const {
+        return balance;
+    }
+
+    void resetDailyLimits() {
+        todayDeposited = 0;
+        todayWithdrawn = 0;
+    }
+};
+
+class User {
+private:
+    int userID;
+    string name;
+    Wallet wallet;
+
+public:
+    User(int id, string username) : userID(id), name(username) {}
+
+    bool deposit(double amount) {
+        return wallet.deposit(amount);
+    }
+
+    bool withdraw(double amount) {
+        return wallet.withdraw(amount);
+    }
+
+    void checkBalance() const {
+        cout << "User: " << name << ", Balance: $" << wallet.getBalance() << "\n";
+    }
+
+    void resetLimits() {
+        wallet.resetDailyLimits();
+    }
+};
+
+int main() {
+    User user(1, "Layqa");
+    user.deposit(5000);
+    user.withdraw(2000);
+    user.checkBalance();
+    return 0;
+}
